@@ -14,7 +14,7 @@
      3. Create Heroku app with `heroku create --buildpack https://github.com/miyagawa/heroku-buildpack-perl.git`
      4. Deploy app with `git push heroku master`
  3. Add items to feed
-     1. There should be a "HeroCast" folder in an "Apps" folder in your dropbox.
+     1. There should be a "HeroCast" folder in an "Apps" folder in your Dropbox.
      2. Add audio and video files.
  4. Access feed
-     1. Go to http://yourapp.herokuapps.com/feed/accesstoken (from step 1.3)
+     1. Go to http://your-app.herokuapp.com/feed/accesstoken (from step 1.3)
