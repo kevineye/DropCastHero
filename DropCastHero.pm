@@ -1,30 +1,39 @@
 package DropCastHero;
 use strict;
 
-use File::Dropbox qw(contents putfile);
+use File::Temp; # used by WebService::Dropbox but mistakenly not included
 use JSON 'from_json';
 use Mojo::URL;
+use WebService::Dropbox;
+
+use constant APP_KEY => 'g48hgy6i98byt5y';
+use constant APP_SECRET => 'shrw9u0b4l5zi7f';
 
 sub new {
     my ($class, $options) = @_;
     die 'token required' unless $options->{token};
+    my ($token, $secret) = split '-', $options->{token};
+
+    my $dropbox = WebService::Dropbox->new({ key => APP_KEY, secret => APP_SECRET });
+    $dropbox->root('sandbox');
+    $dropbox->access_token($token);
+    $dropbox->access_secret($secret);
+
     my $self = bless {
         access_token => $options->{token},
-        dropbox => File::Dropbox->new(
-            access_token => $options->{token},
-            root => 'sandbox',
-            oauth2 => 1
-        ),
+        dropbox => $dropbox,
     }, $class;
+
     $self->{base} = Mojo::URL->new($options->{base}) if $options->{base};
     $self->{download_base} = $self->{download_base} || Mojo::URL->new('/dl/');
     $self->{download_base} = $self->{download_base}->to_abs($self->{base}) if $self->{base};
+
     return $self;
 }
 
 sub list {
     my ($self) = @_;
-    return contents($self->{dropbox});
+    return @{$self->{dropbox}->metadata('/')->{contents}};
 }
 
 sub permanent_link {
@@ -36,17 +45,7 @@ sub permanent_link {
 sub direct_link {
     my ($self, $path) = @_;
     return unless $path =~ m{^/};
-    my $handle = $self->{dropbox};
-    my $dropbox = *$handle{'HASH'};
-    my $furl = $dropbox->{'furl'};
-    my $url = "https://api.dropbox.com/1/media/$dropbox->{root}$path";
-	my $response = $furl->post($url, $dropbox->__headers__);
-    if ($response->code == 200) {
-        my $meta = from_json($response->content());
-        return Mojo::URL->new($meta->{url});
-    } else {
-        return;
-    }
+	return Mojo::URL->new($self->{dropbox}->media($path)->{url});
 }
 
 sub title_from_filename {
@@ -91,9 +90,9 @@ XML
 }
 
 sub upload {
-    my ($self, $filename, $data) = @_;
+    my ($self, $filename, $fh) = @_;
     $filename = "/$filename" unless $filename =~ m{^/};
-    putfile($self->{dropbox}, $filename, $data) or die $!;
+    $self->{dropbox}->files_put_chunked($filename, $fh);
 }
 
 1;

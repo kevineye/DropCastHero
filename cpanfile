@@ -1,2 +1,2 @@
-requires 'File::Dropbox';
+requires 'WebService::Dropbox';
 requires 'Mojolicious';
