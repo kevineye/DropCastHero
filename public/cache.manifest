@@ -1,0 +1,25 @@
+CACHE MANIFEST
+# v15
+
+NETWORK:
+/feed/*
+/dl/*
+/ul/*
+
+CACHE:
+/
+/theme/animate.min.css
+/theme/bootstrap.js
+/theme/bootstrap.min.css
+/theme/fontawesome.ttf
+/theme/jquery.placeholder.js
+/theme/jquery-1.11.0.min.js
+/theme/main.css
+/theme/main.js
+/theme/modernizr.js
+/theme/off-canvas.js
+/theme/open-sans-300.ttf
+/theme/open-sans-400.ttf
+/theme/open-sans-600.ttf
+/theme/open-sans-700.ttf
+/theme/open-sans-800.ttf

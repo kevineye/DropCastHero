@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="">
+    <meta name="viewport" content="width=device-width, user-scalable=1, initial-scale=1, maximum-scale=1">
+    <title>DropCastHero</title>
+    <link rel="stylesheet" href="theme/bootstrap.min.css">
+    <link rel="stylesheet" href="theme/main.css">
+    <link rel="stylesheet" href="theme/animate.min.css">
+    <script src="theme/modernizr.js"></script>
+    <link rel="apple-touch-icon" href="ios/icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="ios/icon-72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="ios/icon@2x.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="ios/icon-72@2x.png">
+    <link rel="apple-touch-startup-image" href="ios/iTunesArtwork@2x.png">
+    <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
+</head>
+<body>
+<div class="app">
+
+    <header class="header header-fixed navbar bg-success">
+        <div class="brand bg-success">
+            <a href="#" class="fa fa-bars off-left visible-xs" data-toggle="off-canvas" data-move="ltr"></a><a href="app.html" class="navbar-brand text-white"><i class="fa fa-rss mg-r-xs"></i><span class="h5"> <b>DropCastHero</b></span></a>
+        </div>
+    </header>
+
+    <section class="layout">
+        <aside class="sidebar canvas-left bg-dark">
+            <nav class="main-navigation">
+                <ul>
+                    <li><a href="#panel-feed"><i class="fa fa-rss"></i><span>Feed</span></a></li>
+                    <li><a href="#panel-upload"><i class="fa fa-cloud-upload"></i><span>Upload</span></a></li>
+                </ul>
+            </nav>
+            <footer>
+                <div class="footer-toolbar pull-left">
+                    <a href="#" class="toggle-sidebar pull-right hidden-xs"><i class="fa fa-angle-left"></i></a>
+                </div>
+            </footer>
+        </aside>
+        <section class="main-content">
+            <div class="content-wrap">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <section class="panel" id="panel-feed">
+                            <header class="panel-heading">
+                                <i class="fa fa-rss"></i>&nbsp;&nbsp;RSS Feed
+                            </header>
+                            <div class="panel-body">
+                                <form class="form-horizontal bordered-group" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Feed URL</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="feed-url" value="">
+                                            <p class="help-block">
+                                                Select and copy.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+
+                        <section class="panel" id="panel-upload">
+                            <header class="panel-heading">
+                                <i class="fa fa-cloud-upload"></i>&nbsp;&nbsp;Upload File
+                            </header>
+                            <div class="panel-body">
+                                <form class="form-horizontal bordered-group" role="form" method="post">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Upload URL</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group mg-b-md">
+                                                <input type="text" class="form-control" id="upload-url" name="url">
+                                                <span class="input-group-btn"><button class="btn btn-white" type="button" id="upload-btn">Go</button></span>
+                                            </div>
+                                            <p class="help-block">
+                                                Enter URL to upload.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </section>
+
+</div>
+
+<script src="theme/jquery-1.11.0.min.js"></script>
+<script src="theme/bootstrap.js"></script>
+<script src="theme/jquery.placeholder.js"></script>
+<script src="theme/off-canvas.js"></script>
+<script src="theme/main.js"></script>
+
+<script>
+
+    var token = 'va-4sWzqGTQAAAAAAAALJ4cLDLRRM9gZw08NNbR6rYaIIzweWdRP7bmB1cd85AFi';
+
+    var feed_url = location.protocol + '//' + location.host + '/feed/' + token;
+    $('#feed-url')
+            .click(function() { $(this).select() })
+            .val(feed_url)
+            .keydown(function(e) { e.preventDefault() })
+            .change(function(e) { $(this).val(feed_url) });
+
+    $('#upload-url').closest('form').attr('action', '/grab/' + token);
+    $('#upload-btn').click(function() { $('#upload-url').closest('form').submit() });
+
+</script>
+
+</body>
+</html>

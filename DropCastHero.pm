@@ -1,18 +1,24 @@
 package DropCastHero;
 use strict;
 
-use File::Dropbox 'contents';
+use File::Dropbox qw(contents putfile);
 use JSON 'from_json';
+use Mojo::URL;
 
 sub new {
-    my ($class, $token) = @_;
+    my ($class, $options) = @_;
+    die 'token required' unless $options->{token};
     my $self = bless {
+        access_token => $options->{token},
         dropbox => File::Dropbox->new(
-            access_token => $token,
+            access_token => $options->{token},
             root => 'sandbox',
             oauth2 => 1
         ),
     }, $class;
+    $self->{base} = Mojo::URL->new($options->{base}) if $options->{base};
+    $self->{download_base} = $self->{download_base} || Mojo::URL->new('/dl/');
+    $self->{download_base} = $self->{download_base}->to_abs($self->{base}) if $self->{base};
     return $self;
 }
 
@@ -21,7 +27,13 @@ sub list {
     return contents($self->{dropbox});
 }
 
-sub link {
+sub permanent_link {
+    my ($self, $path, $base) = @_;
+    return unless $path =~ m{^/};
+    return Mojo::URL->new($self->{access_token} . $path)->to_abs($base || $self->{download_base});
+}
+
+sub direct_link {
     my ($self, $path) = @_;
     return unless $path =~ m{^/};
     my $handle = $self->{dropbox};
@@ -31,7 +43,7 @@ sub link {
 	my $response = $furl->post($url, $dropbox->__headers__);
     if ($response->code == 200) {
         my $meta = from_json($response->content());
-        return $meta->{url};
+        return Mojo::URL->new($meta->{url});
     } else {
         return;
     }
@@ -60,7 +72,7 @@ XML
     for my $item ($self->list) {
         next unless $item->{mime_type} && $item->{mime_type} =~ m{^audio/|^video};
         my $title = $self->title_from_filename($item->{path});
-        my $link = $self->link($item->{path});
+        my $link = $self->permanent_link($item->{path});
         $content .= <<XML;
         <item>
             <title>$title</title>
@@ -76,6 +88,12 @@ XML
 XML
 
     return $content;
+}
+
+sub upload {
+    my ($self, $filename, $data) = @_;
+    $filename = "/$filename" unless $filename =~ m{^/};
+    putfile($self->{dropbox}, $filename, $data) or die $!;
 }
 
 1;
