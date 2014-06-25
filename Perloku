@@ -1,0 +1,2 @@
+#!/bin/sh
+./app.psgi prefork --listen http://*:$PORT
